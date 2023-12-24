@@ -1,0 +1,25 @@
+name: Docker Image Test
+
+on:
+  workflow_run:
+    workflows: ["Docker Build and Push"]
+    types:
+      - completed
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4.1.1
+
+      - name: Pull Docker Image from Docker Hub
+        run: docker pull ayousanz/nekomata-gguf:latest
+
+      - name: Run Docker Image
+        run: docker run --rm ayousanz/nekomata-gguf:latest
+
+      # ここでテストコマンドを実行
+      - name: Test Command
+        run: echo "Run your test commands here"
